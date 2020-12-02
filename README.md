@@ -16,7 +16,3 @@ Também é possível listar seus repositórios, além dos repositórios mais vis
 1. Execute `npm install` ou `yarn install`;
 
 2. execute `yarn start`, podendo acessar a aplicação através do localhost `http://localhost:3000`.
-<<<<<<< HEAD
-=======
-
->>>>>>> master
