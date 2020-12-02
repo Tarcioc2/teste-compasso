@@ -1,25 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "styled-components";
+
+import Header from "./components/layout/Header";
+import Footer from "./components/layout/Footer";
+import MainPage from "./pages/MainPage";
+
+import GlobalStyles from "./styles/GlobalStyles";
+import { ThemeName, themes } from "./styles/themes";
+import Repository from "./pages/Repository";
 
 function App() {
+  const [themeName, setThemeName] = useState<ThemeName>("light");
+  const currentTheme = themes[themeName];
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={currentTheme}>
+      <BrowserRouter>
+        <Header themeName={themeName} setThemeName={setThemeName} />
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/:username" element={<MainPage />} />
+          <Route path="/:username/:repository" element={<Repository />} />
+        </Routes>
+        <Footer />
+        <GlobalStyles />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
