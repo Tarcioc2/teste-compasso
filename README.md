@@ -2,7 +2,7 @@
 
 Projeto simples criado como parte de um teste de conhecimentos básicos para frontend.
 Seu funcionamento é bem simples, através da barra de busca no topo é possível buscas usuários do github e exibir algumas de suas informações, consumindo sua [api](https://api.github.com/) v3 REST.
-Também é possível listar seus repositórios, além dos repositórios mais visitados.
+Também é possível listar seus repositórios, além dos repositórios mais visitados. Além disso também existe a transição para darkmode clicando no icone do github.
 
 ## Tecnologias utilizadas
 

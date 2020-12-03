@@ -60,8 +60,16 @@ export const RepoList = styled.div`
     display: grid;
     grid-gap: 16px;
 
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
+`;
+
+export const Row = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 20px 0;
 `;
 
 export const RepoIcon = styled(RiBookMarkLine)`
@@ -73,6 +81,7 @@ export const RepoIcon = styled(RiBookMarkLine)`
 export const Button = styled.button`
   text-decoration: none;
   margin-top: 24px;
+  margin-right: 10px;
   background: var(--gray-dark);
   padding: 12px 17px;
   border-radius: 24px;

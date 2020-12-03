@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import gitApi from "../../services/githubApi";
 
 import imgSearch from "../../assets/img-searching.png";
 import imgError from "../../assets/img-error.png";
@@ -27,15 +28,13 @@ const Repository: React.FC = () => {
   const [data, setData] = useState<Data>();
 
   useEffect(() => {
-    fetch(`https://api.github.com/repos/${username}/${repository}`).then(
-      async (response) => {
-        setData(
-          response.status === 404
-            ? { error: "Repositório não encontrado" }
-            : { repo: await response.json() }
-        );
-      }
-    );
+    gitApi.getUserRepositorie(username, repository).then(async (response) => {
+      setData(
+        response.status === 404
+          ? { error: "Repositório não encontrado" }
+          : { repo: await response.data }
+      );
+    });
   }, [repository, username]);
 
   if (data?.error) {
@@ -70,6 +69,8 @@ const Repository: React.FC = () => {
         <a
           className={"repository"}
           href={`https://github.com/${username}/${repository}`}
+          target="_Blank"
+          rel="noreferrer"
         >
           {repository}
         </a>
