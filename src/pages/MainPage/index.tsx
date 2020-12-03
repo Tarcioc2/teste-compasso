@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import gitUserApi from "../../services/githubApi";
 
 import imgSearch from "../../assets/img-searching.png";
 import imgError from "../../assets/img-error.png";
@@ -14,6 +15,7 @@ import {
   Button,
   SearchImg,
   SimpleContainer,
+  Row,
 } from "./styles";
 
 import Profile from "../../components/Profile";
@@ -34,10 +36,11 @@ const MainPage: React.FC = () => {
   //Action Controls
   const [repoClicked, setRepoClicked] = useState(false);
   const [favClicked, setFavClicked] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (username !== undefined && username.toString().trim() !== "") {
-      Promise.all([fetch(`https://api.github.com/users/${username}`)]).then(
+      Promise.all([gitUserApi.getUserInfo(username)]).then(
         async (responses) => {
           const [userResponse] = responses;
           if (userResponse.status === 404) {
@@ -45,10 +48,8 @@ const MainPage: React.FC = () => {
             return;
           }
 
-          const user = await userResponse.json();
-
           setData({
-            user,
+            user: userResponse.data,
           });
         }
       );
@@ -58,37 +59,41 @@ const MainPage: React.FC = () => {
   async function HandleClickFavorites() {
     setRepoClicked(false);
     setFavClicked(true);
+    setLoading(true);
 
-    Promise.all([
-      fetch(`https://api.github.com/users/${username}/starred`),
-    ]).then(async (responses) => {
-      const [favsResponse] = responses;
+    Promise.all([gitUserApi.getUserFavorites(username)])
+      .then(async (responses) => {
+        const [favsResponse] = responses;
 
-      const favorites = await favsResponse.json();
-
-      setData({
-        user: data?.user,
-        favorites,
+        setData({
+          user: data?.user,
+          favorites: favsResponse.data,
+        });
+        setLoading(false);
+      })
+      .catch((err) => {
+        alert("Ocorreu um erro com a requisição");
       });
-    });
   }
 
   async function HandleClickRepositories() {
     setRepoClicked(true);
     setFavClicked(false);
+    setLoading(true);
 
-    Promise.all([fetch(`https://api.github.com/users/${username}/repos`)]).then(
-      async (responses) => {
+    Promise.all([gitUserApi.getUserRepositories(username)])
+      .then(async (responses) => {
         const [reposResponse] = responses;
-
-        const repositories = await reposResponse.json();
 
         setData({
           user: data?.user,
-          repositories,
+          repositories: reposResponse.data,
         });
-      }
-    );
+        setLoading(false);
+      })
+      .catch((err) => {
+        alert("Ocorreu um erro com a requisição");
+      });
   }
 
   if (data?.error) {
@@ -122,12 +127,14 @@ const MainPage: React.FC = () => {
             location={data.user.location}
             email={data.user.email}
           />
-          <Button onClick={HandleClickRepositories}>
-            <span>Repos</span>
-          </Button>
-          <Button onClick={HandleClickFavorites}>
-            <span>Starred</span>
-          </Button>
+          <Row>
+            <Button onClick={HandleClickRepositories}>
+              <span>Repos</span>
+            </Button>
+            <Button onClick={HandleClickFavorites}>
+              <span>Starred</span>
+            </Button>
+          </Row>
         </UserInfo>
 
         <Content>
@@ -165,18 +172,31 @@ const MainPage: React.FC = () => {
             </RepoList>
           ) : (
             <RepoList>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "column",
-                }}
-              >
-                <SearchImg src={imgData} />
-                <h2>
-                  Selecione um filtro para visualizar dados sobre repositórios.
-                </h2>
-              </div>
+              {loading ? (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "column",
+                  }}
+                >
+                  <h2>Carregando...</h2>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "column",
+                  }}
+                >
+                  <SearchImg src={imgData} />
+                  <h2>
+                    Selecione um filtro para visualizar dados sobre
+                    repositórios.
+                  </h2>
+                </div>
+              )}
             </RepoList>
           )}
         </Content>

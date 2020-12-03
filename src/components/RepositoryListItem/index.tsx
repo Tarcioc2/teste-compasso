@@ -32,12 +32,12 @@ const RepositoryListItem: React.FC<Props> = ({
           <a
             href={`https://github.com/${username}/${reponame}`}
             target="_Blank"
+            rel="noreferrer"
           >
             {reponame}
           </a>
-
-          <p>{description}</p>
         </header>
+        <p>{description}</p>
       </Body>
 
       <Footer>
